@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHITECH BALLOTBOX- Password Recovery</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a2980, #26d0ce);
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><rect fill="rgba(255,255,255,0.05)" width="100" height="100"/></svg>');
+            background-size: 20px 20px;
+            z-index: -1;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            display: flex;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.25);
+            animation: fadeIn 0.8s ease-out;
+        }
+        
+        .left-panel {
+            flex: 1;
+            background: linear-gradient(to bottom right, #09ac3a, #09ac3a);
+            color: white;
+            padding: 50px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .left-panel::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 60%);
+            transform: rotate(30deg);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .logo i {
+            font-size: 40px;
+            margin-right: 15px;
+            color: #fbfffb;
+        }
+        
+        .logo h1 {
+            font-size: 28px;
+            font-weight: 700;
+        }
+        
+        .left-panel h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            line-height: 1.3;
+            position: relative;
+        }
+        
+        .left-panel p {
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            opacity: 0.9;
+            position: relative;
+        }
+        
+        .features {
+            list-style: none;
+            margin-top: 30px;
+            position: relative;
+        }
+        
+        .features li {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+        
+        .features i {
+            margin-right: 12px;
+            color: #f1f7f1;
+            font-size: 20px;
+        }
+        
+        .right-panel {
+            flex: 1;
+            padding: 50px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .form-container {
+            max-width: 400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        .form-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .form-header h2 {
+            color: #2c3e50;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .form-header p {
+            color: #7f8c8d;
+            font-size: 16px;
+        }
+        
+        .input-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 15px;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 15px 15px 15px 45px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .input-group input:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        
+        .input-group i {
+            position: absolute;
+            left: 15px;
+            top: 40px;
+            color: #7f8c8d;
+            font-size: 18px;
+        }
+        
+        .input-group input::placeholder {
+            color: #bdc3c7;
+            font-size: 14px;
+        }
+        
+        .code-inputs {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 25px;
+        }
+        
+        .code-inputs input {
+            width: 60px;
+            height: 60px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+        
+        .code-inputs input:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            transform: scale(1.05);
+        }
+        
+        .action-btn {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(to right, #27ae60, #2ecc71);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(46, 204, 113, 0.4);
+        }
+        
+        .action-btn:active {
+            transform: translateY(1px);
+        }
+        
+        .back-btn {
+            display: inline-block;
+            width: auto;
+            padding: 12px 25px;
+            background: #e0e0e0;
+            color: #2c3e50;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+        
+        .back-btn:hover {
+            background: #d5d5d5;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .form-footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        
+        .form-footer a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .form-footer a:hover {
+            text-decoration: underline;
+        }
+        
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        
+        .step {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 10px;
+            font-weight: bold;
+            color: #7f8c8d;
+            position: relative;
+        }
+        
+        .step.active {
+            background: #27ae60;
+            color: white;
+        }
+        
+        .step:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 2px;
+            background: #e0e0e0;
+            right: -40px;
+        }
+        
+        .step-text {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 14px;
+            color: #7f8c8d;
+            font-weight: 500;
+        }
+        
+        .step-text.active {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+        
+        .success-message {
+            text-align: center;
+            padding: 30px;
+            background: #e8f5e9;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .success-message i {
+            font-size: 50px;
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+        
+        .success-message h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .left-panel {
+                padding: 30px;
+            }
+            
+            .right-panel {
+                padding: 30px;
+            }
+            
+            .code-inputs input {
+                width: 50px;
+                height: 50px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .left-panel h2 {
+                font-size: 28px;
+            }
+            
+            .form-header h2 {
+                font-size: 24px;
+            }
+            
+            .input-group input {
+                padding: 14px 14px 14px 40px;
+            }
+            
+            .input-group i {
+                top: 38px;
+                left: 14px;
+                font-size: 16px;
+            }
+            
+            .code-inputs input {
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="left-panel">
+            <div class="logo">
+                <i class="fas fa-vote-yea"></i>
+                <h1>CHITECH BALLOG BOD</h1>
+            </div>
+            <h2>Secure Account Recovery</h2>
+            <p>We take your account security seriously. Follow the steps to securely reset your password and regain access to your voting account.</p>
+            
+            <ul class="features">
+                <li><i class="fas fa-shield-alt"></i> End-to-end encrypted recovery</li>
+                <li><i class="fas fa-user-lock"></i> Identity verification</li>
+                <li><i class="fas fa-clock"></i> Time-sensitive security codes</li>
+                <li><i class="fas fa-history"></i> Password history protection</li>
+            </ul>
+        </div>
+        
+        <div class="right-panel">
+            <div class="form-container">
+                <div class="step-indicator">
+                    <div class="step active">1</div>
+                    <div class="step">2</div>
+                    <div class="step">3</div>
+                </div>
+                
+                <div class="step-text active">Enter Email</div>
+                <div class="step-text">Verify Code</div>
+                <div class="step-text">Reset Password</div>
+                
+                <div class="form-header">
+                    <h2>Password Recovery</h2>
+                    <p>Enter your email to receive a reset code</p>
+                </div>
+                
+                <div id="step1">
+                    <div class="input-group">
+                        <label for="recoveryEmail">Email Address</label>
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="recoveryEmail" placeholder="example@chitechma.edu" required>
+                    </div>
+                    
+                    <button class="action-btn" id="sendCodeBtn">Send Verification Code</button>
+                    <button class="action-btn back-btn" onclick="location.href='login.html'">
+                        <i class="fas fa-arrow-left"></i> Back to Login
+                    </button>
+                </div>
+                
+                <div id="step2" style="display: none;">
+                    <div class="input-group">
+                        <label>Verification Code</label>
+                        <p style="margin-bottom: 15px; color: #7f8c8d;">We've sent a 6-digit code to your email. Please enter it below.</p>
+                        <div class="code-inputs">
+                            <input type="text" maxlength="1" class="code-input" autofocus>
+                            <input type="text" maxlength="1" class="code-input">
+                            <input type="text" maxlength="1" class="code-input">
+                            <input type="text" maxlength="1" class="code-input">
+                            <input type="text" maxlength="1" class="code-input">
+                            <input type="text" maxlength="1" class="code-input">
+                        </div>
+                    </div>
+                    
+                    <button class="action-btn" id="verifyCodeBtn">Verify Code</button>
+                    <button class="action-btn back-btn" id="backToStep1">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </button>
+                </div>
+                
+                <div id="step3" style="display: none;">
+                    <div class="input-group">
+                        <label for="newPassword">New Password</label>
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="newPassword" placeholder="Create a strong password" required>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="confirmPassword">Confirm Password</label>
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="confirmPassword" placeholder="Re-enter your password" required>
+                    </div>
+                    
+                    <div class="input-group">
+                        <div class="password-strength">
+                            <p>Password Strength: <span id="strengthText">Weak</span></p>
+                            <div class="strength-meter">
+                                <div class="strength-bar weak"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="action-btn" id="resetPasswordBtn">Reset Password</button>
+                    <button class="action-btn back-btn" id="backToStep2">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </button>
+                </div>
+                
+                <div id="successStep" style="display: none;">
+                    <div class="success-message">
+                        <i class="fas fa-check-circle"></i>
+                        <h3>Password Reset Successful!</h3>
+                        <p>Your password has been updated successfully. You can now log in with your new password.</p>
+                    </div>
+                    
+                    <button class="action-btn" onclick="location.href='login.html'">
+                        <i class="fas fa-sign-in-alt"></i> Back to Login
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const step1 = document.getElementById('step1');
+        const step2 = document.getElementById('step2');
+        const step3 = document.getElementById('step3');
+        const successStep = document.getElementById('successStep');
+        const sendCodeBtn = document.getElementById('sendCodeBtn');
+        const verifyCodeBtn = document.getElementById('verifyCodeBtn');
+        const resetPasswordBtn = document.getElementById('resetPasswordBtn');
+        const backToStep1 = document.getElementById('backToStep1');
+        const backToStep2 = document.getElementById('backToStep2');
+        const codeInputs = document.querySelectorAll('.code-input');
+        const newPassword = document.getElementById('newPassword');
+        const strengthText = document.getElementById('strengthText');
+        
+        // Steps navigation
+        sendCodeBtn.addEventListener('click', function() {
+            const email = document.getElementById('recoveryEmail').value;
+            
+            
+            
+            // Simulate sending code
+            sendCodeBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+            sendCodeBtn.disabled = true;
+            
+            setTimeout(() => {
+                sendCodeBtn.innerHTML = 'Send Verification Code';
+                sendCodeBtn.disabled = false;
+                
+                // Move to next step
+                step1.style.display = 'none';
+                step2.style.display = 'block';
+                updateStepIndicator(2);
+                
+                // Focus first code input
+                codeInputs[0].focus();
+            }, 1500);
+        });
+        
+        verifyCodeBtn.addEventListener('click', function() {
+            let code = '';
+            codeInputs.forEach(input => {
+                code += input.value;
+            });
+            
+            if (code.length !== 6) {
+                showError('Please enter the complete 6-digit code');
+                return;
+            }
+            
+            // Move to next step
+            step2.style.display = 'none';
+            step3.style.display = 'block';
+            updateStepIndicator(3);
+        });
+        
+        resetPasswordBtn.addEventListener('click', function() {
+            const password = newPassword.value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (password !== confirmPassword) {
+                showError('Passwords do not match');
+                return;
+            }
+            
+            if (password.length < 8) {
+                showError('Password must be at least 8 characters');
+                return;
+            }
+            
+            // Simulate password reset
+            resetPasswordBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Resetting...';
+            resetPasswordBtn.disabled = true;
+            
+            setTimeout(() => {
+                // Show success
+                step3.style.display = 'none';
+                successStep.style.display = 'block';
+                updateStepIndicator(4);
+            }, 1500);
+        });
+        
+        // Back buttons
+        backToStep1.addEventListener('click', function() {
+            step2.style.display = 'none';
+            step1.style.display = 'block';
+            updateStepIndicator(1);
+        });
+        
+        backToStep2.addEventListener('click', function() {
+            step3.style.display = 'none';
+            step2.style.display = 'block';
+            updateStepIndicator(2);
+        });
+        
+        // Code input navigation
+        codeInputs.forEach((input, index) => {
+            input.addEventListener('input', function() {
+                if (this.value.length === 1) {
+                    if (index < codeInputs.length - 1) {
+                        codeInputs[index + 1].focus();
+                    } else {
+                        this.blur();
+                    }
+                }
+            });
+            
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Backspace' && this.value === '') {
+                    if (index > 0) {
+                        codeInputs[index - 1].focus();
+                    }
+                }
+            });
+        });
+        
+        // Password strength indicator
+        newPassword.addEventListener('input', function() {
+            const password = this.value;
+            let strength = 0;
+            
+            // Length check
+            if (password.length >= 8) strength += 1;
+            if (password.length >= 12) strength += 1;
+            
+            // Character diversity
+            if (/[A-Z]/.test(password)) strength += 1;
+            if (/[0-9]/.test(password)) strength += 1;
+            if (/[^A-Za-z0-9]/.test(password)) strength += 1;
+            
+            // Update UI
+            const strengthBar = document.querySelector('.strength-bar');
+            strengthBar.className = 'strength-bar ';
+            
+            if (strength <= 2) {
+                strengthText.textContent = 'Weak';
+                strengthBar.classList.add('weak');
+            } else if (strength <= 4) {
+                strengthText.textContent = 'Medium';
+                strengthBar.classList.add('medium');
+            } else {
+                strengthText.textContent = 'Strong';
+                strengthBar.classList.add('strong');
+            }
+            
+            // Set width based on strength
+            const width = Math.min(100, strength * 20);
+            strengthBar.style.width = width + '%';
+        });
+        
+        // Helper functions
+        function isValidEmail(email) {
+            const regex = /^[a-zA-Z0-9._-]+@chitechma\.edu$/;
+            return regex.test(email);
+        }
+        
+        function showError(message) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            errorDiv.innerHTML = `
+                <div style="background: #ffebee; color: #c62828; padding: 15px; border-radius: 8px; 
+                margin-bottom: 20px; display: flex; align-items: center;">
+                    <i class="fas fa-exclamation-circle" style="margin-right: 10px; font-size: 18px;"></i>
+                    ${message}
+                </div>
+            `;
+            
+            const formHeader = document.querySelector('.form-header');
+            if (document.querySelector('.error-message')) {
+                document.querySelector('.error-message').remove();
+            }
+            formHeader.parentNode.insertBefore(errorDiv, formHeader.nextSibling);
+            
+            // Shake animation
+            const form = document.querySelector('.form-container');
+            form.style.animation = 'shake 0.5s';
+            setTimeout(() => {
+                form.style.animation = '';
+            }, 500);
+        }
+        
+        function updateStepIndicator(step) {
+            const steps = document.querySelectorAll('.step');
+            const stepTexts = document.querySelectorAll('.step-text');
+            
+            steps.forEach((s, index) => {
+                if (index < step) {
+                    s.classList.add('active');
+                } else {
+                    s.classList.remove('active');
+                }
+            });
+            
+            stepTexts.forEach((s, index) => {
+                if (index < step - 1) {
+                    s.classList.add('active');
+                } else {
+                    s.classList.remove('active');
+                }
+            });
+        }
+        
+        // Add shake animation
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                20%, 60% { transform: translateX(-10px); }
+                40%, 80% { transform: translateX(10px); }
+            }
+            
+            .strength-meter {
+                height: 8px;
+                background: #f0f0f0;
+                border-radius: 4px;
+                margin-top: 8px;
+                overflow: hidden;
+            }
+            
+            .strength-bar {
+                height: 100%;
+                transition: width 0.3s;
+            }
+            
+            .weak {
+                background: #ff5252;
+                width: 33%;
+            }
+            
+            .medium {
+                background: #ffb74d;
+                width: 66%;
+            }
+            
+            .strong {
+                background: #4CAF50;
+                width: 100%;
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

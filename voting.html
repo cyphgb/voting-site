@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Election Dashboard - Chitechma</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --primary: #2ecc71;
+      --secondary: #27ae60;
+      --dark: #2c3e50;
+      --light: #f9f9f9;
+      --white: #ffffff;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Poppins", sans-serif;
+    }
+
+    body {
+      background: var(--light);
+      color: var(--dark);
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      width: 220px;
+      background: var(--primary);
+      color: white;
+      padding: 1rem;
+      position: fixed;
+      height: 100vh;
+      overflow-y: auto;
+      z-index: 1000;
+    }
+
+    .sidebar h2 {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .sidebar a {
+      display: block;
+      padding: 0.7rem;
+      margin: 0.5rem 0;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: 0.3s;
+    }
+
+    .sidebar a:hover {
+      background: var(--secondary);
+    }
+
+    .main {
+      margin-left: 220px;
+      padding: 2rem;
+      flex: 1;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .menu-toggle {
+      display: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--primary);
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .card {
+      background: var(--white);
+      padding: 1.2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      transition: 0.3s;
+    }
+
+    .card:hover {
+      transform: scale(1.03);
+    }
+
+    .card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .chart-container {
+      margin-top: 3rem;
+      background: var(--white);
+      padding: 1rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    }
+
+    button[type="submit"] {
+      margin-top: 2rem;
+      padding: 0.8rem 1.5rem;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button[type="submit"]:hover {
+      background: var(--secondary);
+    }
+
+    @media(max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+        position: absolute;
+      }
+
+      .sidebar.active {
+        transform: translateX(0);
+      }
+
+      .main {
+        margin-left: 0;
+        width: 100%;
+      }
+
+      .menu-toggle {
+        display: block;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <h2>Chitechma</h2>
+    <a href="#">🏠 Dashboard</a>
+    <a href="#">🗳️ Vote</a>
+    <a href="#">📊 Results</a>
+    <a href="#">👤 Profile</a>
+    <a href="#">🚪 Logout</a>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main">
+    <div class="header">
+      <h1>Election Categories</h1>
+      <div class="menu-toggle" id="menuToggle">☰</div>
+    </div>
+
+    <div class="cards">
+      <div class="card" data-title="President">
+        <h3>🏛️ President</h3>
+        <select>
+          <option value="">Select candidate</option>
+          <option value="Candidate A">Candidate A</option>
+          <option value="Candidate B">Candidate B</option>
+          <option value="Candidate C">Candidate C</option>
+        </select>
+      </div>
+
+      <div class="card" data-title="Vice President">
+        <h3>🤝 Vice President</h3>
+        <select>
+          <option value="">Select candidate</option>
+          <option value="Candidate D">Candidate D</option>
+          <option value="Candidate E">Candidate E</option>
+          <option value="Candidate F">Candidate F</option>
+        </select>
+      </div>
+
+      <div class="card" data-title="Secretary">
+        <h3>📝 Secretary</h3>
+        <select>
+          <option value="">Select candidate</option>
+          <option value="Candidate G">Candidate G</option>
+          <option value="Candidate H">Candidate H</option>
+          <option value="Candidate I">Candidate I</option>
+        </select>
+      </div>
+
+      <button type="submit">VOTE</button>
+    </div>
+
+    <div class="chart-container">
+      <h2>📊 Election Results</h2>
+      <canvas id="resultsChart"></canvas>
+    </div>
+  </div>
+
+  <script>
+    // Sidebar toggle
+    const menuToggle = document.getElementById('menuToggle');
+    const sidebar = document.getElementById('sidebar');
+    menuToggle.addEventListener('click', () => {
+      sidebar.classList.toggle('active');
+    });
+
+    // Votes storage
+    const votes = {
+      "President": {},
+      "Vice President": {},
+      "Secretary": {}
+    };
+
+    // Vote handling
+    document.querySelector('button[type="submit"]').addEventListener('click', () => {
+      const selects = document.querySelectorAll('.card select');
+
+      selects.forEach(select => {
+        const position = select.closest('.card').dataset.title;
+        const candidate = select.value;
+
+        if (candidate) {
+          if (!votes[position][candidate]) {
+            votes[position][candidate] = 0;
+          }
+          votes[position][candidate]++;
+        }
+      });
+
+      showAllResults();
+    });
+
+    // Chart rendering
+    const ctx = document.getElementById('resultsChart').getContext('2d');
+    let chartInstance;
+
+    function showAllResults() {
+      const allPositions = Object.keys(votes);
+      const combinedLabels = [];
+      const combinedData = [];
+      const colors = ['#2ecc71', '#27ae60', '#1abc9c', '#f1c40f', '#e74c3c', '#3498db', '#9b59b6'];
+      let colorIndex = 0;
+      const backgroundColors = [];
+
+      allPositions.forEach(position => {
+        const candidates = votes[position];
+        for (const candidate in candidates) {
+          combinedLabels.push(`${position} - ${candidate}`);
+          combinedData.push(candidates[candidate]);
+          backgroundColors.push(colors[colorIndex % colors.length]);
+          colorIndex++;
+        }
+      });
+
+      if (chartInstance) chartInstance.destroy();
+
+      chartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: combinedLabels,
+          datasets: [{
+            label: 'Votes',
+            data: combinedData,
+            backgroundColor: backgroundColors,
+            borderRadius: 8
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                stepSize: 1
+              }
+            }
+          },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: ctx => `${ctx.parsed.y} vote(s)`
+              }
+            }
+          }
+        }
+      });
+    }
+  </script>
+
+</body>
+</html>
